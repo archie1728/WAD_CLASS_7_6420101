@@ -1,0 +1,24 @@
+{
+    "accessories": [
+      {
+        "id": 1,
+        "name": "Car Cover",
+        "price": 49.99
+      },
+      {
+        "id": 2,
+        "name": "Floor Mat",
+        "price": 39.99
+      },
+      {
+        "id": 3,
+        "name": "Seat Cover",
+        "price": 79.99
+      },
+      {
+        "id": 4,
+        "name": "Phone Holder",
+        "price": 24.99
+      }
+    ]
+  }
