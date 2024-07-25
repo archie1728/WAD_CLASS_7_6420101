@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import accessoryData from './accessory.json';
 import DataTable from './components/DataTable'
@@ -8,6 +8,7 @@ function App() {
   const productRef = useRef()
   const [price, setPrice] = useState(0)
   const [selectedItems, setSelectedItems] = useState([])
+  const [filteredSelectedItems, setFilteredSelectedItems] = useState([])
 
   const handleSubmit = (e) => {
     const productId = parseInt(productRef.current.value)
@@ -20,7 +21,9 @@ function App() {
         quantity: parseInt(quantityRef.current.value)
       }
       console.table(order)
-      setSelectedItems(prevItems => [...prevItems, order])
+      const newSelectedItems = [...selectedItems, order]
+      setSelectedItems(newSelectedItems)
+      setFilteredSelectedItems(newSelectedItems)
       
       // Reset form fields
       productRef.current.value = ''
@@ -33,6 +36,38 @@ function App() {
     const productId = parseInt(e.target.value)
     const product = accessoryData.accessories.find(accessory => accessory.id === productId)
     setPrice(product ? product.price : 0)
+  }
+
+  const deleteItemByIndex = (index) => {
+    const newSelectedItems = selectedItems.filter((_, i) => i !== index)
+    setSelectedItems(newSelectedItems)
+    setFilteredSelectedItems(newSelectedItems)
+  }
+
+  const search = (keyword) => {
+    if (keyword.trim() === '') {
+      setFilteredSelectedItems([...selectedItems])
+    } else {
+      setFilteredSelectedItems(
+        selectedItems.filter(item => 
+          item.name.toLowerCase().includes(keyword.toLowerCase())
+        )
+      )
+    }
+  }
+
+  const sortAscending = () => {
+    const sortedItems = [...filteredSelectedItems].sort((a, b) => 
+      a.name.localeCompare(b.name)
+    )
+    setFilteredSelectedItems(sortedItems)
+  }
+
+  const sortDescending = () => {
+    const sortedItems = [...filteredSelectedItems].sort((a, b) => 
+      b.name.localeCompare(a.name)
+    )
+    setFilteredSelectedItems(sortedItems)
   }
 
   return (
@@ -75,7 +110,13 @@ function App() {
       </Row>
       <Row>
         <Col>
-          <DataTable data={selectedItems} />
+          <DataTable 
+            data={filteredSelectedItems} 
+            onDelete={deleteItemByIndex}  
+            onSearch={search}
+            onSortAscending={sortAscending}
+            onSortDescending={sortDescending}
+          />
         </Col>
       </Row>
     </Container>
